@@ -1,0 +1,43 @@
+@use 'normalize.scss';
+@import url('https://use.typekit.net/jzz1wbo.css');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+
+html,
+body {
+	padding: 0;
+	margin: 0;
+	font-family: 'Lato', sans-serif;
+}
+
+html,
+body,
+body > div:first-child,
+div#__next,
+div#__next > div {
+	height: 100%;
+}
+
+nav {
+	position: absolute;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	z-index: 5;
+	height: 96px;
+
+	div {
+		width: 1408px;
+		display: flex;
+		justify-content: flex-end;
+
+		a {
+			color: #fff;
+			display: flex;
+			text-decoration: none;
+			text-transform: uppercase;
+			font-size: 1.5rem;
+			padding: 0 16px;
+			align-items: center;
+		}
+	}
+}

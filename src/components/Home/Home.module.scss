@@ -1,0 +1,78 @@
+svg.triangles {
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
+}
+
+div.rightLeft {
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	grid-template-columns: auto auto auto;
+	grid-template-rows: 30% 200px 32px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	justify-content: center;
+	align-content: flex-start;
+
+	div.title {
+		grid-column: 1 / span 3;
+		font-family: costa, sans-serif;
+		text-transform: uppercase;
+		font-size: 200px;
+	}
+	div.space {
+		grid-column: 1 / span 3;
+	}
+	div.dev,
+	div.dream,
+	div.des {
+		margin-top: 24px;
+		color: rgba(255, 255, 255, 0.75);
+		text-transform: uppercase;
+		font-size: 1.5rem;
+		font-family: 'Lato', sans-serif;
+		font-weight: 300;
+	}
+	div.dev {
+		justify-self: flex-start;
+	}
+	div.dream {
+		justify-self: center;
+	}
+	div.des {
+		justify-self: flex-end;
+	}
+}
+
+div.gradient {
+	background: linear-gradient(
+		122.34deg,
+		rgba(145, 0, 182, 0.75) -61.17%,
+		rgba(255, 138, 0, 0.65) 100%
+	);
+	transition: clip-path 0.25s ease-in-out;
+	z-index: 1;
+
+	div.title {
+		color: rgba(255, 229, 199, 1);
+	}
+}
+
+div.dark {
+	background-color: rgba(0, 0, 0, 0.8);
+	transition: clip-path 0.25s ease-in-out;
+	div.title {
+		color: transparent;
+		-webkit-text-stroke: 1px #cfcfcf;
+	}
+}
