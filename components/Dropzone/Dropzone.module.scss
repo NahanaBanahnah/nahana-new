@@ -1,0 +1,14 @@
+.dropzone {
+	background-color: rgba(#000000, 0.5);
+	border: 2px dotted rgba(#ffffff, 0.2);
+	padding: 64px;
+
+	input {
+		display: none;
+	}
+}
+
+.dropzone.on {
+	background-color: rgba(#32bcbc, 0.5);
+	border: 2px dotted rgba(#ffffff, 0.2);
+}

@@ -1,0 +1,23 @@
+.grid {
+	display: grid;
+	grid-template-columns: 400px 1fr;
+	gap: 64px;
+	height: 100vh;
+
+	padding: 64px 16px;
+
+	.projectNav {
+		background-color: rgba(0, 0, 0, 0.5);
+		height: 100%;
+		overflow: scroll;
+		box-sizing: content-box;
+		padding: 16px;
+		border-radius: 16px;
+	}
+}
+
+.edit {
+	padding: 16px;
+	transition: all 0.25s ease-in-out;
+	outline: none;
+}

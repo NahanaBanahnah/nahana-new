@@ -1,0 +1,75 @@
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+section.reel {
+	width: 100vw;
+	height: 100vh;
+	background: linear-gradient(-45deg, #935dd1, #d66d73, #f8b869);
+	background-size: 400% 400%;
+	animation: gradient 35s ease infinite;
+
+	.title {
+		position: fixed;
+		top: -78px;
+		left: -30px;
+		width: 800px;
+		opacity: 0.7;
+	}
+
+	.sideTitle {
+		position: fixed;
+		right: 0px;
+		opacity: 0.5;
+	}
+
+	.container {
+		display: flex;
+		height: 100vh;
+		align-items: flex-end;
+		justify-content: center;
+
+		.subContainer {
+			width: 100%;
+			height: 717px;
+			position: relative;
+			pointer-events: none;
+
+			.videoContainer {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				display: flex;
+				align-items: flex-start;
+				justify-content: center;
+				mask-image: url(../../public/img/layout/video_mask.webp);
+				mask-size: 100%;
+				z-index: 0;
+			}
+			video {
+				position: relative;
+				top: 88px;
+				width: 730px;
+				pointer-events: all;
+			}
+			.imageContainer {
+				position: relative;
+				z-index: 1;
+				mix-blend-mode: color-burn;
+			}
+			.reelContainer {
+				transform: translate3d(0, 0, 0);
+				mix-blend-mode: color-burn;
+				z-index: 1;
+				pointer-events: none;
+			}
+		}
+	}
+}
