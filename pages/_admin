@@ -1,0 +1,746 @@
+import { useRouter } from 'next/router'
+import { useState, useEffect } from 'react'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { Container } from '@mui/system'
+import { supabase } from '../util/supabaseClient'
+import { useForm } from 'react-hook-form'
+import styles from '../components/Admin/admin.module.scss'
+
+import {
+	Checkbox,
+	CssBaseline,
+	FormControl,
+	InputLabel,
+	ListItemText,
+	MenuItem,
+	OutlinedInput,
+	Select,
+	Switch,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableRow,
+	TextField,
+} from '@mui/material'
+
+const darkTheme = createTheme({
+	palette: {
+		mode: 'dark',
+		secondary: {
+			main: '#ffffff',
+		},
+	},
+})
+
+const Admin = () => {
+	const {
+		handleSubmit,
+		control,
+		setValue,
+		formState: { errors },
+		reset,
+	} = useForm({
+		defaultValues: {
+			ProjectName: '',
+			Client: '',
+			Date: '',
+			URL: '',
+			Ongoing: false,
+			Featured: false,
+			Active: false,
+			ProjectTypeId: 0,
+		},
+	})
+
+	const router = useRouter()
+	const [LOADED, setLoaded] = useState(false)
+
+	const [PROJECTS, setProjects] = useState(false)
+
+	const [TOOLS, setTools] = useState(false)
+	const [ALL_TOOLS, setAllTools] = useState(false)
+	const [ACTIVE_TOOLS, setActiveTools] = useState([])
+
+	const [ROLES, setRoles] = useState(false)
+	const [ALL_ROLES, setAllRoles] = useState(false)
+	const [ACTIVE_ROLES, setActiveRoles] = useState([])
+
+	const [EDIT_ID, setEditId] = useState(false)
+	const [MENU_STATE, setMenuState] = useState()
+
+	const [TYPES, setTypes] = useState(false)
+
+	useEffect(() => {
+		const checkSession = async () => {
+			const session = await supabase.auth.session()
+			if (!session) {
+				router.push('/login')
+			} else {
+				setLoaded(true)
+			}
+		}
+
+		checkSession()
+	}, [])
+
+	useEffect(() => {
+		const qur = async () => {
+			const { data: Projects } = await supabase
+				.from('Projects')
+				.select()
+				.order('ProjectId', { ascending: true })
+
+			const { data: Tools } = await supabase.from('Tools').select()
+			const { data: Roles } = await supabase.from('Roles').select()
+			const { data: Types } = await supabase.from('ProjectTypes').select()
+
+			setProjects(Projects)
+			setTools(Tools.sort((a, b) => a.Tool.localeCompare(b.Tool)))
+			setAllTools(Tools.sort((a, b) => a.Tool.localeCompare(b.Tool)))
+			setRoles(Roles.sort((a, b) => a.Role.localeCompare(b.Role)))
+			setAllRoles(Roles.sort((a, b) => a.Role.localeCompare(b.Role)))
+			setTypes(Types)
+		}
+		qur()
+	}, [])
+
+	// const editProject = id => {
+	// 	let project = PROJECTS.find(item => item.ProjectId === id)
+
+	// 	let menu_state = MENU_STATE === id ? false : id
+	// 	setMenuState(menu_state)
+
+	// 	Object.entries(project).map(([k, v]) => {
+	// 		let value = v === null ? '' : v
+	// 		setValue(k, value, { shouldTouch: true })
+	// 	})
+
+	// 	let projectTools = JSON.parse(project.ProjectTools)
+
+	// 	let tools = [...ALL_TOOLS]
+
+	// 	if (projectTools) {
+	// 		tools = tools.filter(el => {
+	// 			return projectTools.every(f => {
+	// 				return f.ToolId !== el.ToolId
+	// 			})
+	// 		})
+	// 	} else {
+	// 		projectTools = []
+	// 	}
+
+	// 	let projectRoles = JSON.parse(project.ProjectRoles)
+
+	// 	let roles = [...ALL_ROLES]
+
+	// 	if (projectRoles) {
+	// 		roles = roles.filter(el => {
+	// 			return projectRoles.every(f => {
+	// 				return f.RoleId !== el.RoleId
+	// 			})
+	// 		})
+	// 	} else {
+	// 		projectRoles = []
+	// 	}
+
+	// 	setActiveTools(projectTools)
+	// 	setTools(tools)
+	// 	setActiveRoles(projectRoles)
+	// 	setRoles(roles)
+	// 	setEditId(id)
+	// }
+
+	// const addTool = tool => {
+	// 	setActiveTools([...ACTIVE_TOOLS, tool])
+	// 	setTools(TOOLS.filter(item => item.ToolId !== tool.ToolId))
+	// }
+
+	// const addRole = role => {
+	// 	setActiveRoles([...ACTIVE_ROLES, role])
+	// 	setRoles(ROLES.filter(item => item.RoleId !== role.RoleId))
+	// }
+
+	// const removeTool = tool => {
+	// 	let tools = [...TOOLS, tool]
+	// 	tools.sort((a, b) => a.Tool.localeCompare(b.Tool))
+	// 	setTools(tools)
+	// 	setActiveTools(ACTIVE_TOOLS.filter(item => item.ToolId !== tool.ToolId))
+	// }
+
+	// const removeRole = role => {
+	// 	let roles = [...ROLES, role]
+	// 	roles.sort((a, b) => a.Role.localeCompare(b.Role))
+	// 	setRoles(roles)
+	// 	setActiveRoles(ACTIVE_ROLES.filter(item => item.RoleId !== role.RoleId))
+	// }
+	// const onSubmit = async formData => {
+	// 	let insert = { ...formData }
+
+	// 	insert.Active = insert.Active !== true ? false : true
+	// 	insert.Ongoing = insert.Ongoing !== true ? false : true
+	// 	insert.Featured = insert.Featured !== true ? false : true
+	// 	insert.ProjectRoles = JSON.stringify(ACTIVE_ROLES)
+	// 	insert.ProjectTools = JSON.stringify(ACTIVE_TOOLS)
+	// 	insert.FeaturedPosition = null
+
+	// 	delete insert.ProjectId
+
+	// 	const { error } = await supabase
+	// 		.from('Projects')
+	// 		.update(insert)
+	// 		.eq('ProjectId', EDIT_ID)
+
+	// 	let projectArray = [...PROJECTS]
+
+	// 	projectArray.find((item, i) => {
+	// 		if (item.ProjectId === EDIT_ID) {
+	// 			projectArray[i] = insert
+	// 			return true
+	// 		}
+	// 	})
+
+	// 	setProjects(projectArray)
+
+	// 	setRoles(ALL_ROLES)
+	// 	setTools(ALL_TOOLS)
+	// 	setActiveRoles([])
+	// 	setActiveTools([])
+	// 	setEditId(false)
+	// 	reset()
+	// }
+
+	// const [CURRENT, setCurrent] = useState('')
+
+	const saveEdit = async e => {
+		e.target.style.backgroundColor = 'transparent'
+		const c = e.target
+		const VALUE = c.textContent
+
+		if (VALUE !== CURRENT) {
+			let insert = {
+				[c.dataset.row]: VALUE,
+			}
+
+			const { error } = await supabase
+				.from('Projects')
+				.update(insert)
+				.eq('ProjectId', c.dataset.id)
+		}
+	}
+	const setEdit = e => {
+		e.target.style.backgroundColor = '#386c865c'
+		setCurrent(e.target.textContent)
+	}
+
+	const saveExtra = async (e, dataset) => {
+		let value = e.target.value
+		if (dataset.checkbox) {
+			value = e.target.checked
+		}
+
+		console.log(value)
+
+		let k = Object.keys(PROJECTS).find(
+			key => PROJECTS[key].ProjectId === parseInt(dataset.id)
+		)
+		let projects = [...PROJECTS]
+		projects[k][dataset.row] = value
+
+		setProjects(projects)
+		await supabase
+			.from('Projects')
+			.update({ [dataset.row]: value })
+			.eq('ProjectId', dataset.id)
+	}
+
+	const handleChange = (event, dataset) => {
+		const {
+			target: { value },
+		} = event
+
+		let k = Object.keys(PROJECTS).find(
+			key => PROJECTS[key].ProjectId === parseInt(dataset.id)
+		)
+		let projects = [...PROJECTS]
+		let added = value.at(-1)
+		let current = JSON.parse(projects[k].ProjectRoles)
+
+		let index = current.findIndex(item => {
+			return item.RoleId === added.RoleId
+		})
+
+		index !== -1 ? current.splice(index, 1) : current.push(added)
+		projects[k].ProjectRoles = JSON.stringify(current)
+		setProjects(projects)
+
+		//set state of editing value
+		//set onBlur to compare current array and updated array
+		//if different update database
+
+		// setPersonName(
+		// 	// On autofill we get a stringified value.
+		// 	typeof value === 'string' ? value.split(',') : value
+		// )
+	}
+
+	return (
+		<ThemeProvider theme={darkTheme}>
+			<CssBaseline />
+			<Container maxWidth="xl">
+				<Table sx={{ minWidth: 650 }} aria-label="simple table">
+					<TableHead>
+						<TableRow>
+							<TableCell>Project</TableCell>
+							<TableCell>Client</TableCell>
+							<TableCell>Date</TableCell>
+							<TableCell>URL</TableCell>
+							<TableCell>Project Type</TableCell>
+							<TableCell>Featured</TableCell>
+							<TableCell>On Going</TableCell>
+							<TableCell>Active</TableCell>
+							<TableCell>Category</TableCell>
+							<TableCell>Tools</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{PROJECTS &&
+							PROJECTS.map(item => {
+								let projectRoles = JSON.parse(item.ProjectRoles)
+								let projectDisplay = projectRoles
+									? projectRoles.map(item => item.Role)
+									: []
+
+								return (
+									<TableRow key={item.ProjectId}>
+										<TableCell sx={{ py: 1 }}>
+											<div
+												className={styles.edit}
+												data-id={item.ProjectId}
+												data-row="ProjectName"
+												contentEditable="true"
+												onBlur={saveEdit}
+												onFocus={setEdit}
+											>
+												{item.ProjectName}
+											</div>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<div
+												className={styles.edit}
+												data-id={item.ProjectId}
+												data-row="ProjectName"
+												contentEditable="true"
+												onBlur={saveEdit}
+												onFocus={setEdit}
+											>
+												{item.Client}
+											</div>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<TextField
+												size="small"
+												inputProps={{
+													'data-id': item.ProjectId,
+													'data-row': 'Date',
+												}}
+												type="date"
+												value={item.Date}
+												onChange={e =>
+													saveExtra(e, {
+														id: item.ProjectId,
+														row: 'Date',
+													})
+												}
+											/>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<div
+												className={styles.edit}
+												data-id={item.ProjectId}
+												data-row="ProjectName"
+												contentEditable="true"
+												onBlur={saveEdit}
+												onFocus={setEdit}
+											>
+												{item.URL}
+											</div>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<FormControl fullWidth>
+												<InputLabel>Type</InputLabel>
+												<Select
+													value={item.ProjectTypeId}
+													fullWidth
+													size="small"
+													onChange={e =>
+														saveExtra(e, {
+															id: item.ProjectId,
+															row: 'ProjectTypeId',
+														})
+													}
+												>
+													{TYPES &&
+														TYPES.map(item => (
+															<MenuItem
+																key={
+																	item.ProjectTypeId
+																}
+																value={
+																	item.ProjectTypeId
+																}
+															>
+																{
+																	item.ProjectType
+																}
+															</MenuItem>
+														))}
+												</Select>
+											</FormControl>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<Switch
+												checked={item.Featured}
+												onChange={e =>
+													saveExtra(e, {
+														id: item.ProjectId,
+														row: 'Featured',
+														checkbox: true,
+													})
+												}
+											/>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<Switch
+												checked={item.Ongoing}
+												onChange={e =>
+													saveExtra(e, {
+														id: item.ProjectId,
+														row: 'Ongoing',
+														checkbox: true,
+													})
+												}
+											/>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<Switch
+												checked={item.Active}
+												onChange={e =>
+													saveExtra(e, {
+														id: item.ProjectId,
+														row: 'Active',
+														checkbox: true,
+													})
+												}
+											/>
+										</TableCell>
+
+										<TableCell sx={{ py: 1 }}>
+											<FormControl sx={{ width: 200 }}>
+												<InputLabel size="small">
+													Category
+												</InputLabel>
+												<Select
+													multiple
+													size="small"
+													value={
+														projectRoles
+															? projectRoles
+															: []
+													}
+													onChange={e =>
+														handleChange(e, {
+															id: item.ProjectId,
+														})
+													}
+													input={
+														<OutlinedInput label="Tag" />
+													}
+													renderValue={selected =>
+														selected.map(
+															item => item.Role
+														)
+													}
+												>
+													{ALL_ROLES.map(r => (
+														<MenuItem
+															key={r.RoleId}
+															value={r}
+														>
+															<Checkbox
+																checked={
+																	projectRoles &&
+																	projectRoles.find(
+																		item =>
+																			item.RoleId ===
+																			r.RoleId
+																	)
+																}
+															/>
+															<ListItemText
+																primary={r.Role}
+															/>
+														</MenuItem>
+													))}
+												</Select>
+											</FormControl>
+										</TableCell>
+									</TableRow>
+								)
+							})}
+					</TableBody>
+				</Table>
+				{/* <Box className={styles.grid}>
+					<div className={styles.projectNav}>
+						<MenuList>
+							{PROJECTS &&
+								PROJECTS.map(item => {
+									console.log(item)
+									return (
+										<MenuItem
+											selected={
+												MENU_STATE === item.ProjectId
+											}
+											key={item.ProjectId}
+											onClick={e =>
+												editProject(item.ProjectId)
+											}
+										>
+											<ListItemText>
+												<Stack
+													direction="row"
+													spacing={1}
+												>
+													{item.Active ? (
+														<VisibilityIcon />
+													) : (
+														<VisibilityOffIcon />
+													)}
+													<Typography>
+														{item.ProjectName}
+													</Typography>
+												</Stack>
+											</ListItemText>
+										</MenuItem>
+									)
+								})}
+						</MenuList>
+					</div>
+					<div>
+						<Stack direction="row" spacing={4}>
+							<Controller
+								name="ProjectName"
+								rules={{
+									required: true,
+								}}
+								control={control}
+								render={({ field, fieldState: { error } }) => {
+									return (
+										<TextField
+											{...field}
+											error={error}
+											label="Project Name"
+											required
+										/>
+									)
+								}}
+							/>
+							<Controller
+								name="Client"
+								rules={{
+									required: true,
+								}}
+								control={control}
+								render={({ field, fieldState: { error } }) => (
+									<TextField
+										{...field}
+										error={error}
+										label="Client"
+										required
+									/>
+								)}
+							/>
+							<Controller
+								name="Date"
+								rules={{
+									required: true,
+								}}
+								control={control}
+								render={({ field, fieldState: { error } }) => (
+									<TextField
+										type="date"
+										error={error}
+										{...field}
+										required
+									/>
+								)}
+							/>
+							<Controller
+								name="Ongoing"
+								control={control}
+								render={({ field }) => {
+									return (
+										<>
+											<FormControlLabel
+												control={
+													<Switch
+														{...field}
+														checked={field.value}
+													/>
+												}
+												label="On Going"
+											/>
+										</>
+									)
+								}}
+							/>
+						</Stack>
+						<Stack direction="row" spacing={4} mt={2}>
+							<Controller
+								name="URL"
+								rules={{
+									required: true,
+								}}
+								control={control}
+								render={({ field, fieldState: { error } }) => (
+									<TextField
+										error={error}
+										{...field}
+										label="URL"
+										required
+									/>
+								)}
+							/>
+							<FormControl sx={{ width: '400px' }}>
+								<InputLabel>Project Type</InputLabel>
+								<Controller
+									name="ProjectTypeId"
+									control={control}
+									rules={{
+										required: true,
+									}}
+									render={({
+										field,
+										fieldState: { error },
+									}) => (
+										<Select
+											{...field}
+											required
+											error={error}
+										>
+											{TYPES &&
+												TYPES.map(item => (
+													<MenuItem
+														key={item.ProjectTypeId}
+														value={
+															item.ProjectTypeId
+														}
+													>
+														{item.ProjectType}
+													</MenuItem>
+												))}
+										</Select>
+									)}
+								/>
+							</FormControl>
+
+							<Controller
+								name="Featured"
+								control={control}
+								render={({ field }) => (
+									<>
+										<FormControlLabel
+											control={
+												<Switch
+													{...field}
+													checked={field.value}
+												/>
+											}
+											label="Featured"
+										/>
+									</>
+								)}
+							/>
+							<Controller
+								name="Active"
+								control={control}
+								render={({ field }) => (
+									<>
+										<FormControlLabel
+											control={<Switch {...field} />}
+											label="Active"
+											checked={field.value}
+										/>
+									</>
+								)}
+							/>
+						</Stack>
+						<Paper sx={{ p: 2, mt: 2 }}>
+							<Paper elevation={16} sx={{ p: 2 }}>
+								{ACTIVE_TOOLS &&
+									ACTIVE_TOOLS.sort((a, b) =>
+										a.Tool.localeCompare(b.Tool)
+									).map(item => (
+										<Chip
+											label={item.Tool}
+											sx={{ m: 1 }}
+											key={item.ToolId}
+											onDelete={() => removeTool(item)}
+										/>
+									))}
+							</Paper>
+							{TOOLS &&
+								TOOLS.map(item => {
+									return (
+										<Chip
+											sx={{ m: 1 }}
+											key={item.ToolId}
+											label={item.Tool}
+											onClick={() => addTool(item)}
+										/>
+									)
+								})}
+						</Paper>
+						<Paper sx={{ p: 2, mt: 2 }}>
+							<Paper elevation={16} sx={{ p: 2 }}>
+								{ACTIVE_ROLES &&
+									ACTIVE_ROLES.sort((a, b) =>
+										a.Role.localeCompare(b.Role)
+									).map(item => (
+										<Chip
+											label={item.Role}
+											sx={{ m: 1 }}
+											key={item.RoleId}
+											onDelete={() => removeRole(item)}
+										/>
+									))}
+							</Paper>
+							{ROLES &&
+								ROLES.map(item => {
+									return (
+										<Chip
+											sx={{ m: 1 }}
+											key={item.RoleId}
+											label={item.Role}
+											onClick={() => addRole(item)}
+										/>
+									)
+								})}
+						</Paper>
+						<Button onClick={handleSubmit(onSubmit)}>
+							{EDIT_ID ? 'Edit' : 'Add'}
+						</Button>
+					</div>
+				</Box> */}
+			</Container>
+		</ThemeProvider>
+	)
+}
+export default Admin

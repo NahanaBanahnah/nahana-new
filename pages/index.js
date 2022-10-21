@@ -1,25 +1,31 @@
 import { useEffect, useRef } from 'react'
-import Nav from '../src/components/Nav/Nav'
 import useMouse from '@react-hook/mouse-position'
+import { motion } from 'framer-motion'
 
-import styles from '../src/components/Home/Home.module.scss'
-import triangle_styles from '../src/components/Home/Triangle.module.scss'
-
+import Overlay from '../components/Home/Overlay'
 import Triangles from '../public/triangle.svg'
 
-import Overlay from '../src/components/Home/Overlay'
+import triangle_styles from '../components/Home/Triangle.module.scss'
+import styles from '../components/Home/Home.module.scss'
 
 const Index = () => {
+	/**
+	 * @summary - set up mouse position
+	 */
+
 	const REF = useRef(null)
 	const MOUSE = useMouse(REF, {
 		enterDelay: 100,
 		leaveDelay: 100,
 	})
 
+	/**
+	 * @summary - build random triangle colors
+	 */
 	useEffect(() => {
 		const CLASSES = Object.values(triangle_styles)
 
-		const PATHS = document.querySelectorAll('path')
+		const PATHS = document.querySelectorAll('#triangles > path')
 		PATHS.forEach(ele => {
 			for (let i = CLASSES.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * i)
@@ -31,26 +37,20 @@ const Index = () => {
 		})
 	}, [])
 
-	console.log(MOUSE.x)
-
 	return (
-		<>
-			<Nav />
-			<div ref={REF}>
-				<Triangles className={styles.triangles} />
-
-				<Overlay
-					classes={[styles.gradient, styles.rightLeft]}
-					mouse={MOUSE.x}
-					position="right"
-				/>
-				<Overlay
-					classes={[styles.dark, styles.rightLeft]}
-					mouse={MOUSE.x}
-					position="left"
-				/>
-			</div>
-		</>
+		<motion.div ref={REF}>
+			<Triangles id="triangles" className={styles.triangles} />
+			<Overlay
+				classes={[styles.gradient, styles.rightLeft]}
+				mouse={MOUSE.x}
+				position="right"
+			/>
+			<Overlay
+				classes={[styles.dark, styles.rightLeft]}
+				mouse={MOUSE.x}
+				position="left"
+			/>
+		</motion.div>
 	)
 }
 

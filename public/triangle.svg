@@ -5,7 +5,7 @@ version="1.1"
 xmlns="http://www.w3.org/2000/svg" 
 viewBox="0 0 1920 1080"
 preserveAspectRatio="none"
-preserveAspectRatio="none" >
+>
 <polygon class="st0" points="86,0 0,150 172,150 "/>
 <polygon class="st1" points="258,0 172,150 344,150 "/>
 <polygon class="st1" points="430,0 344,150 516,150 "/>
