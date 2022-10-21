@@ -76,12 +76,12 @@ const Reel = () => {
 							className={styles.videoContainer}
 							variants={FADE_UP}
 						>
-							<video controls>
+							{/* <video controls>
 								<source
 									src="/vid/2021_demo_reel.mp4"
 									type="video/mp4"
 								/>
-							</video>
+							</video> */}
 						</motion.div>
 						<motion.div
 							className={styles.imageContainer}
